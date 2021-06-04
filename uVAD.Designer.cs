@@ -1,4 +1,6 @@
 ﻿
+using System.Windows.Forms;
+
 namespace Launcher
 {
     partial class uVAD
@@ -43,6 +45,8 @@ namespace Launcher
             this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.outputCom = new System.Windows.Forms.TextBox();
+            this.dlWorker = new System.ComponentModel.BackgroundWorker();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // download
@@ -127,7 +131,9 @@ namespace Launcher
             // LinkLabel
             // 
             this.LinkLabel.AutoSize = true;
+            this.LinkLabel.BackColor = System.Drawing.Color.Transparent;
             this.LinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LinkLabel.ForeColor = System.Drawing.Color.Black;
             this.LinkLabel.Location = new System.Drawing.Point(200, 128);
             this.LinkLabel.Name = "LinkLabel";
             this.LinkLabel.Size = new System.Drawing.Size(47, 20);
@@ -138,7 +144,9 @@ namespace Launcher
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.Color.Black;
             this.label1.Location = new System.Drawing.Point(184, 192);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 20);
@@ -168,7 +176,9 @@ namespace Launcher
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label2.ForeColor = System.Drawing.Color.Black;
             this.label2.Location = new System.Drawing.Point(184, 24);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 20);
@@ -179,12 +189,15 @@ namespace Launcher
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
+            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.checkBox1.ForeColor = System.Drawing.Color.Black;
             this.checkBox1.Location = new System.Drawing.Point(136, 88);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(179, 24);
             this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Prefer MP3 Format";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.UseVisualStyleBackColor = false;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // button1
@@ -201,7 +214,9 @@ namespace Launcher
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(8, 584);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(121, 13);
@@ -212,23 +227,38 @@ namespace Launcher
             // outputCom
             // 
             this.outputCom.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.outputCom.Location = new System.Drawing.Point(8, 384);
+            this.outputCom.Location = new System.Drawing.Point(8, 378);
             this.outputCom.Multiline = true;
             this.outputCom.Name = "outputCom";
             this.outputCom.ReadOnly = true;
             this.outputCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputCom.Size = new System.Drawing.Size(416, 184);
+            this.outputCom.Size = new System.Drawing.Size(416, 192);
             this.outputCom.TabIndex = 5;
             this.outputCom.TabStop = false;
-            this.outputCom.Text = "Welcome, めぐみん here!\r\n[NOTE] If After pressing the Download button and nothing sho" +
-    "ws up like the speed of the download 100% mostlikely your link or format options" +
-    " is invalid.\r\n";
+            this.outputCom.Text = "Welcome, めぐみん here!\r\n";
             this.outputCom.TextChanged += new System.EventHandler(this.outputCom_TextChanged);
+            // 
+            // dlWorker
+            // 
+            this.dlWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dlWorker_DoWork);
+            this.dlWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dlWorker_RunWorkerCompleted);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(128, 576);
+            this.progressBar1.MarqueeAnimationSpeed = 1;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(192, 23);
+            this.progressBar1.TabIndex = 6;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // uVAD
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(434, 602);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.outputCom);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBox1);
@@ -242,13 +272,15 @@ namespace Launcher
             this.Controls.Add(this.link);
             this.Controls.Add(this.update);
             this.Controls.Add(this.download);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "uVAD";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Launcher DL (Build Version 2.0)";
+            this.Text = "Launcher DL (Build Version 3.0)";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.uVAD_FormClosing);
             this.Load += new System.EventHandler(this.uVAD_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -269,6 +301,8 @@ namespace Launcher
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox outputCom;
+        private System.ComponentModel.BackgroundWorker dlWorker;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
