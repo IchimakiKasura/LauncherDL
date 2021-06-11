@@ -2,6 +2,7 @@
   "profiles": {
     "Launcher": {
       "commandName": "Project",
+      "remoteDebugEnabled": false,
       "sqlDebugging": false,
       "nativeDebugging": false
     }

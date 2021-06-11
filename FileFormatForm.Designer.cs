@@ -35,22 +35,23 @@ namespace LauncherDL
             // FFFText
             // 
             this.FFFText.BackColor = System.Drawing.Color.White;
-            this.FFFText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.FFFText.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.FFFText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.FFFText.Location = new System.Drawing.Point(8, 8);
             this.FFFText.Multiline = true;
             this.FFFText.Name = "FFFText";
             this.FFFText.ReadOnly = true;
             this.FFFText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.FFFText.Size = new System.Drawing.Size(656, 304);
+            this.FFFText.Size = new System.Drawing.Size(704, 344);
             this.FFFText.TabIndex = 0;
+            this.FFFText.TabStop = false;
             this.FFFText.TextChanged += new System.EventHandler(this.FFFText_TextChanged);
             // 
             // Formats
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(666, 320);
+            this.ClientSize = new System.Drawing.Size(718, 359);
             this.Controls.Add(this.FFFText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;

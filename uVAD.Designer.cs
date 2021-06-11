@@ -36,7 +36,6 @@ namespace Launcher
             this.update = new System.Windows.Forms.Button();
             this.link = new System.Windows.Forms.TextBox();
             this.fileFormat = new System.Windows.Forms.Button();
-            this.format = new System.Windows.Forms.TextBox();
             this.LinkLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.Ftype = new System.Windows.Forms.ComboBox();
@@ -47,6 +46,9 @@ namespace Launcher
             this.outputCom = new System.Windows.Forms.TextBox();
             this.dlWorker = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.FileName = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.format = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // download
@@ -96,7 +98,6 @@ namespace Launcher
             this.link.Size = new System.Drawing.Size(416, 34);
             this.link.TabIndex = 1;
             this.link.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.link.TextChanged += new System.EventHandler(this.link_TextChanged);
             // 
             // fileFormat
             // 
@@ -116,43 +117,29 @@ namespace Launcher
             this.fileFormat.UseVisualStyleBackColor = false;
             this.fileFormat.Click += new System.EventHandler(this.fileFormat_Click);
             // 
-            // format
-            // 
-            this.format.CausesValidation = false;
-            this.format.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.format.Location = new System.Drawing.Point(8, 216);
-            this.format.Name = "format";
-            this.format.PlaceholderText = "Format settings";
-            this.format.Size = new System.Drawing.Size(417, 34);
-            this.format.TabIndex = 1;
-            this.format.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.format.TextChanged += new System.EventHandler(this.format_TextChanged);
-            // 
             // LinkLabel
             // 
             this.LinkLabel.AutoSize = true;
             this.LinkLabel.BackColor = System.Drawing.Color.Transparent;
-            this.LinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.LinkLabel.ForeColor = System.Drawing.Color.Black;
-            this.LinkLabel.Location = new System.Drawing.Point(200, 128);
+            this.LinkLabel.Location = new System.Drawing.Point(192, 128);
             this.LinkLabel.Name = "LinkLabel";
-            this.LinkLabel.Size = new System.Drawing.Size(47, 20);
+            this.LinkLabel.Size = new System.Drawing.Size(53, 22);
             this.LinkLabel.TabIndex = 2;
             this.LinkLabel.Text = "Link:";
-            this.LinkLabel.Click += new System.EventHandler(this.LinkLabel_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(184, 192);
+            this.label1.Location = new System.Drawing.Point(64, 192);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 20);
+            this.label1.Size = new System.Drawing.Size(94, 25);
             this.label1.TabIndex = 2;
             this.label1.Text = "Options:";
-            this.label1.Click += new System.EventHandler(this.LinkLabel_Click);
             // 
             // Ftype
             // 
@@ -163,7 +150,7 @@ namespace Launcher
             this.Ftype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.Ftype.FormattingEnabled = true;
             this.Ftype.Items.AddRange(new object[] {
-            "None",
+            "Custom",
             "Video",
             "Audio"});
             this.Ftype.Location = new System.Drawing.Point(152, 56);
@@ -177,14 +164,13 @@ namespace Launcher
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(184, 24);
+            this.label2.Location = new System.Drawing.Point(168, 24);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 20);
+            this.label2.Size = new System.Drawing.Size(109, 25);
             this.label2.TabIndex = 2;
             this.label2.Text = "File Type:";
-            this.label2.Click += new System.EventHandler(this.LinkLabel_Click);
             // 
             // checkBox1
             // 
@@ -198,7 +184,6 @@ namespace Launcher
             this.checkBox1.TabIndex = 3;
             this.checkBox1.Text = "Prefer MP3 Format";
             this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // button1
             // 
@@ -226,16 +211,20 @@ namespace Launcher
             // 
             // outputCom
             // 
-            this.outputCom.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.outputCom.Location = new System.Drawing.Point(8, 378);
+            this.outputCom.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.outputCom.HideSelection = false;
+            this.outputCom.Location = new System.Drawing.Point(8, 384);
+            this.outputCom.Margin = new System.Windows.Forms.Padding(4);
             this.outputCom.Multiline = true;
             this.outputCom.Name = "outputCom";
             this.outputCom.ReadOnly = true;
             this.outputCom.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputCom.Size = new System.Drawing.Size(416, 192);
+            this.outputCom.ShortcutsEnabled = false;
+            this.outputCom.Size = new System.Drawing.Size(416, 186);
             this.outputCom.TabIndex = 5;
             this.outputCom.TabStop = false;
-            this.outputCom.Text = "Welcome, めぐみん here!\r\n";
+            this.outputCom.Text = "welcome, めぐみん here!\r\n[NOTE] Run \"file formats\" to get more options\r\n[NOTE] Read t" +
+    "he \"readme.txt\" if it\'s your first time using this";
             this.outputCom.TextChanged += new System.EventHandler(this.outputCom_TextChanged);
             // 
             // dlWorker
@@ -245,19 +234,61 @@ namespace Launcher
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(128, 576);
+            this.progressBar1.Location = new System.Drawing.Point(0, 576);
             this.progressBar1.MarqueeAnimationSpeed = 1;
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(192, 23);
+            this.progressBar1.Size = new System.Drawing.Size(432, 23);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 6;
-            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
+            // 
+            // FileName
+            // 
+            this.FileName.CausesValidation = false;
+            this.FileName.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.FileName.Location = new System.Drawing.Point(224, 216);
+            this.FileName.Name = "FileName";
+            this.FileName.PlaceholderText = "(optional)";
+            this.FileName.Size = new System.Drawing.Size(200, 34);
+            this.FileName.TabIndex = 7;
+            this.FileName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label4.ForeColor = System.Drawing.Color.Black;
+            this.label4.Location = new System.Drawing.Point(264, 192);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(116, 25);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "File Name:";
+            // 
+            // format
+            // 
+            this.format.AllowDrop = true;
+            this.format.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.format.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.format.DropDownWidth = 320;
+            this.format.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.format.FormattingEnabled = true;
+            this.format.IntegralHeight = false;
+            this.format.Items.AddRange(new object[] {
+            "best"});
+            this.format.Location = new System.Drawing.Point(8, 216);
+            this.format.Name = "format";
+            this.format.Size = new System.Drawing.Size(200, 33);
+            this.format.TabIndex = 9;
             // 
             // uVAD
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(434, 602);
+            this.ClientSize = new System.Drawing.Size(432, 602);
+            this.Controls.Add(this.format);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.FileName);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.outputCom);
             this.Controls.Add(this.button1);
@@ -268,7 +299,6 @@ namespace Launcher
             this.Controls.Add(this.label2);
             this.Controls.Add(this.LinkLabel);
             this.Controls.Add(this.fileFormat);
-            this.Controls.Add(this.format);
             this.Controls.Add(this.link);
             this.Controls.Add(this.update);
             this.Controls.Add(this.download);
@@ -279,7 +309,7 @@ namespace Launcher
             this.MaximizeBox = false;
             this.Name = "uVAD";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Launcher DL (Build Version 3.0)";
+            this.Text = "Launcher DL (Build Version 4.5)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.uVAD_FormClosing);
             this.Load += new System.EventHandler(this.uVAD_Load);
             this.ResumeLayout(false);
@@ -292,7 +322,6 @@ namespace Launcher
         private System.Windows.Forms.Button update;
         private System.Windows.Forms.Button download;
         private System.Windows.Forms.Button fileFormat;
-        private System.Windows.Forms.TextBox format;
         private System.Windows.Forms.Label LinkLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox Ftype;
@@ -303,6 +332,9 @@ namespace Launcher
         private System.Windows.Forms.TextBox outputCom;
         private System.ComponentModel.BackgroundWorker dlWorker;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private TextBox FileName;
+        private Label label4;
+        private ComboBox format;
     }
 }
 
