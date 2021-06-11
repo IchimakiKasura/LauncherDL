@@ -34,11 +34,42 @@ namespace Launcher
         private int audioFormatNum;
 
         // Error Handler
-        private string ErrorHandler(int errorNumber)
+        private string ErrorHandler(string errorName)
         {
-            switch (errorNumber) {
+            switch (errorName) {
                 default:
                     return "lol";
+                case "missing files":
+                    return "ERROR: Cannot done the process because of missing files!\r\n" +
+                    "   missing files:\r\n";
+
+                case "missing format":
+                    return "\r\n[STATE] ERROR" +
+                            "\r\n[ERROR] Input some Format options!" +
+                            "\r\n[WARN] No Format Settings set on FileType NONE" +
+                            "\r\n[NOTE] FileType NONE only used when using Format settings!";
+
+                case "No link":
+                    return "\r\n[STATE] ERROR" +
+                    "\r\n[ERROR] Link cannot be empty!" +
+                    "\r\n[WARN] No Link Given! please put some link first!";
+
+                case "Invalid link":
+                    return "\r\n[STATE] ERROR" +
+                    "\r\n[ERROR] Invalid link!" +
+                    "\r\n[WARN] The link given was invalid";
+
+                case "Invalid link 2":
+                    return "\r\n[ERROR] File didn't downloaded properly, causes:" +
+                    "\r\n      -Link given is Invalid" +
+                    "\r\n      -Link itself has no Video or Audio present" +
+                    "\r\n      -Poor internet connection" +
+                    "\r\n      -If you're using \"Custom\" with options,\r\nRemember Video format code first before the audio [video+audio]";
+
+                case "Failed Format":
+                    return "\r\n[WARN] Link does not contain any Format options " +
+                    "\r\n      -Link given is not yet available for format options" +
+                    "\r\n[NOTE] You can still download the video using format \"best\" or go to the Video File type to download";
             }
         }
 
@@ -149,10 +180,9 @@ namespace Launcher
 
             if (MissingFiles != "")
             {
-                outputCom.Text +=
-                    "ERROR: Cannot done the process because of missing files!\r\n" +
-                    "   missing files:\r\n" +
+                outputCom.Text += ErrorHandler("missing files") +
                     $"{MissingFiles}\r\n";
+                    
                 return false;
             }
 
@@ -253,11 +283,7 @@ namespace Launcher
                         if (format.Text == "")
                         {
                             MessageBox.Show("Input some Format options", "Megumin", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                            outputCom.AppendText(
-                            "\r\n[STATE] ERROR" +
-                            "\r\n[ERROR] Input some Format options!" +
-                            "\r\n[WARN] No Format Settings set on FileType NONE" +
-                            "\r\n[NOTE] FileType NONE only used when using Format settings!");
+                            outputCom.AppendText(ErrorHandler("missing format"));
                             download.Enabled = true;
                             update.Enabled = true;
                             fileFormat.Enabled = true;
@@ -296,10 +322,7 @@ namespace Launcher
                 else
                 {
                     MessageBox.Show("Invalid link!", "Megumin", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    outputCom.AppendText(
-                    "\r\n[STATE] ERROR" +
-                    "\r\n[ERROR] Invalid link!" +
-                    "\r\n[WARN] The link given was invalid");
+                    outputCom.AppendText(ErrorHandler("Invalid link"));
                     download.Enabled = true;
                     update.Enabled = true;
                     fileFormat.Enabled = true;
@@ -316,11 +339,7 @@ namespace Launcher
             else
             {
                 MessageBox.Show("Link cannot be empty!", "Megumin", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                outputCom.AppendText(
-                "\r\n[STATE] ERROR" +
-                "\r\n[ERROR] Link cannot be empty!" +
-                "\r\n[WARN] No Link Given! please put some link first!" +
-                "\r\n[NOTE] FileType NONE only used when using Format settings!");
+                outputCom.AppendText(ErrorHandler("No link"));
                 download.Enabled = true;
                 update.Enabled = true;
                 fileFormat.Enabled = true;
@@ -374,10 +393,7 @@ namespace Launcher
                 else
                 {
                     MessageBox.Show("Invalid link!", "Megumin", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    outputCom.AppendText(
-                    "\r\n[STATE] ERROR" +
-                    "\r\n[ERROR] Invalid link!" +
-                    "\r\n[WARN] The link given was invalid");
+                    outputCom.AppendText(ErrorHandler("Invalid link"));
                     download.Enabled = true;
                     update.Enabled = true;
                     fileFormat.Enabled = true;
@@ -394,10 +410,7 @@ namespace Launcher
             else
             {
                 MessageBox.Show("Link cannot be empty!", "Megumin", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                outputCom.AppendText(
-                "\r\n[STATE] ERROR" +
-                "\r\n[ERROR] Link cannot be empty!" +
-                "\r\n[WARN] No Link Given! please put some link first!");
+                outputCom.AppendText(ErrorHandler("No link"));
                 download.Enabled = true;
                 update.Enabled = true;
                 fileFormat.Enabled = true;
@@ -620,11 +633,7 @@ namespace Launcher
         {
             if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"Downloading webpage"))
             {
-                outputCom.AppendText("\r\n[ERROR] File didn't downloaded properly, causes:");
-                outputCom.AppendText("\r\n      -Link given is Invalid");
-                outputCom.AppendText("\r\n      -Link itself has no Video or Audio present");
-                outputCom.AppendText("\r\n      -Poor internet connection");
-                outputCom.AppendText("\r\n      -If you're using \"Custom\" with options, Remember Video format code first before the audio [video+audio]");
+                outputCom.AppendText(ErrorHandler("Invalid Link 2"));
             }
 
             if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"\[PROGRESS\] 100% of (.*) in (.*)$"))
@@ -664,9 +673,7 @@ namespace Launcher
 
                 if (Val == string.Empty)
                 {
-                    outputCom.AppendText("\r\n[WARN] Link does not contain any Format options ");
-                    outputCom.AppendText("\r\n      -Link given is not yet available for format options");
-                    outputCom.AppendText("\r\n[NOTE] You can still download the video using format \"best\" or go to the Video File type to download");
+                    outputCom.AppendText(ErrorHandler("Failed Format"));
                 }
                 Val = string.Empty;
             }
