@@ -16,22 +16,26 @@ namespace Launcher
     {
 
         //readonly Regex Dlrg = new Regex(@"^\[download\] (?<percent>.*)% of (?<size>.*) at (?<speed>.*) ETA (?<time>.*)$");
+        
         //strings
         static readonly string Path_ = $"\"{Directory.GetCurrentDirectory()}\\ffmpeg\\ydl.bin\"";
+        private List<string> ext = new List<string>() { "mp4", "mkv", "webm", "mp3", "m4a" };
         static readonly string ffmpeg = $"{Directory.GetCurrentDirectory()}\\ffmpeg";
         string FileFormatRegex = @"(.*)mp4([\s]*)(([0-9]+)x([0-9]+))";
         private List<string> videoFormatNumList = new List<string>();
-        private List<string> videoFormatRes = new List<string>();
         private List<string> videoFormatSize = new List<string>();
+        private List<string> videoFormatRes = new List<string>();
         public static string Val = "";
         string scc;
+
         //bools
+        bool IsDownloading = false;
         private bool Txtf = false;
         bool FileFormats_ = false;
         bool FfUnavail = false;
-        bool IsDownloading = false;
+
         //ints
-        private int audioFormatNum;
+        private int audioFormatNum = 0;
 
         // Error Handler
         private string ErrorHandler(string errorName)
@@ -61,10 +65,13 @@ namespace Launcher
 
                 case "Invalid link 2":
                     return "\r\n[ERROR] File didn't downloaded properly, causes:" +
-                    "\r\n      -Link given is Invalid" +
-                    "\r\n      -Link itself has no Video or Audio present" +
-                    "\r\n      -Poor internet connection" +
-                    "\r\n      -If you're using \"Custom\" with options,\r\nRemember Video format code first before the audio [video+audio]";
+                    "\r\n      -Link given is Invalid\r\n" +
+                    "\r\n      -Link itself has no Video or Audio present\r\n" +
+                    "\r\n      -Poor internet connection\r\n" +
+                    "\r\n      -If you're using \"Custom\" with options," +
+                    "\r\n       Remember Video format code first before" +
+                    "\r\n       the audio [video+audio]\r\n" +
+                    "\r\n      -Some letters aren't accepted on the custom FileName";
 
                 case "Failed Format":
                     return "\r\n[WARN] Link does not contain any Format options " +
@@ -89,6 +96,7 @@ namespace Launcher
             videoFormatRes.Clear();
             videoFormatSize.Clear();
             videoFormatNumList.Clear();
+            audioFormatNum = 0;
 
             outputCom.AppendText("\r\n[SYSTEM] Loading FileFormat.");
             var sc = $"-F \"{link}\"";
@@ -98,7 +106,7 @@ namespace Launcher
 
         private void Ydl_download(string link, bool IsVideo, bool IsMP3)
         {
-            var transformedSTR = FileName.Text.Replace(" ", "-");
+            var transformedSTR = FileName.Text.Replace(" ", "_$_&@&");
             if (IsVideo)
             {
                 string sc;
@@ -156,7 +164,7 @@ namespace Launcher
             }
             else
             {
-                var transformedSTR = FileName.Text.Replace(" ", "-");
+                var transformedSTR = FileName.Text.Replace(" ", "_$_&@&");
                 sc = $"-f {format} \"{link}\" -o output/formatted/%(ext)s/{transformedSTR}.%(ext)s --ffmpeg-location \"{ffmpeg}\"";
             }
             if (FfmpegCheck())
@@ -255,9 +263,13 @@ namespace Launcher
                 try
                 {
                     if (audioFormatNum != 0)
+                    {
                         FormatTXT = $"{videoFormatNumList[format.SelectedIndex]}+{audioFormatNum}";
+                    }
                     else
+                    {
                         FormatTXT = videoFormatNumList[format.SelectedIndex];
+                    }
                 }
                 catch
                 {
@@ -525,8 +537,8 @@ namespace Launcher
                             outputCom.Lines = line;
                             //scrolls to the bottom automatically
                             outputCom.ScrollToCaret();
-                        }
-                        outputCom.AppendText($"\r\n{str}");
+                        } else 
+                            outputCom.AppendText($"\r\n{str}");
                 }
             }
             else
@@ -542,10 +554,10 @@ namespace Launcher
                 }
                 if (Txtf)
                 {
-                    if (Regex.IsMatch(str, @"(.*)m4a(.*)audio only tiny"))
+                    if (Regex.IsMatch(str, @"(.*)m4a([\s].*)audio only tiny"))
+                    {
                         audioFormatNum = Convert.ToInt32(Regex.Match(str, @"(?<formatCode>.*)m4a(.*)audio only tiny").Groups["formatCode"].Value.Trim());
-                    else
-                        audioFormatNum = 0;
+                    }
                     if (Regex.IsMatch(str, FileFormatRegex))
                     {
                         var FFR = @"(?<formatCode>.*)mp4([\s]*)(?<videoRes>([0-9]+)x([0-9]+))([\s]*)(?<resolution>[0-9]+p)(.*)video only, (?<size>([0-9]+(.*)))";
@@ -571,7 +583,6 @@ namespace Launcher
                     Val += $"{e.Data ?? string.Empty}\r\n\r\n";
                 }
             }
-
         }
 
         private void uVAD_FormClosing(object sender, FormClosingEventArgs e)
@@ -584,6 +595,25 @@ namespace Launcher
                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 e.Cancel = (window == DialogResult.OK);
+            }
+            // deletes left over downloads if forced closed fcken why?
+
+        }
+        private void uVAD_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            var splitted = FileName.Text.Replace(" ", "_$_&@&");
+            for (int i = 0; i < ext.Count; i++)
+            {
+                try
+                {
+                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{splitted}.{ext[i]}");
+                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}");
+                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}");
+                }
+                catch
+                {
+                    // catching the errors
+                }
             }
         }
 
@@ -620,7 +650,8 @@ namespace Launcher
                     RedirectStandardError = true,
                     CreateNoWindow = true
                 };
-                var proc = new Process() { StartInfo = dl };
+                var proc = new Process();
+                proc.StartInfo = dl;
                 proc.OutputDataReceived += OutputHandler;
                 proc.Start();
                 proc.BeginOutputReadLine();
@@ -633,7 +664,7 @@ namespace Launcher
         {
             if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"Downloading webpage"))
             {
-                outputCom.AppendText(ErrorHandler("Invalid Link 2"));
+                outputCom.AppendText(ErrorHandler("Invalid link 2"));
             }
 
             if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"\[PROGRESS\] 100% of (.*) in (.*)$"))
@@ -645,11 +676,28 @@ namespace Launcher
                 line[outputCom.Lines.Length - 1] = $"\r\n[COMPLETE] Downloaded file in {DataETA} with a size of {DataSize}\r\n";
                 outputCom.Lines = line;
                 outputCom.ScrollToCaret();
+
+                if(FileName.Text.Length != 0)
+                {
+                    var splitted = FileName.Text.Replace(" ", "_$_&@&");
+                    for(int i = 0; i < ext.Count; i++)
+                    {
+                        try
+                        {
+                            File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{FileName.Text}.{ext[i]}");
+                            File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Video\\{FileName.Text}.{ext[i]}");
+                            File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{FileName.Text}.{ext[i]}");
+                        }
+                        catch {
+                            // catching the errors
+                        }
+                    }
+                }
             }
 
             Txtf = false;
             progressBar1.Value = 0;
-            progressBar1.Visible = false;
+            progressBar1.Visible =  false;
 
             if (FileFormats_)
             {
@@ -710,6 +758,22 @@ namespace Launcher
                 MessageBox.Show("the file \"ydl.bin\" isn't found on the ffmpeg folder! please reinstall", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
+            ToolTip tooltip = new ToolTip();
+            tooltip.AutoPopDelay = 5000;
+            tooltip.InitialDelay = 1000;
+            tooltip.ReshowDelay = 500;
+
+            tooltip.ShowAlways = true;
+
+            //tooltips messages
+            tooltip.SetToolTip(Ftype, "Custom:\npick any resolution you want or customize what type of format you want\n\n" +
+                "Video:\nIt always pick the best format or video available like small sizes but shit quality sorry\n\n" +
+                "Audio:\nOf course its audio. Audio is Audio. It only downloads the Audio file of the video or idk");
+            tooltip.SetToolTip(checkBox1, "Of course you read it.\nIt just convert that m4a file into mp3");
+            tooltip.SetToolTip(format, "Run \"File Format\" first so\nmore options will show here.");
+            tooltip.SetToolTip(update, "Updates the \"ydl.bin\" file if the download is having an error");
+            tooltip.SetToolTip(download, "Download, of course it DOWNLOADS\nthe video/audio given from the link");
         }
+
     }
 }

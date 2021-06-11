@@ -188,7 +188,7 @@ namespace Launcher
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button1.Location = new System.Drawing.Point(328, 576);
+            this.button1.Location = new System.Drawing.Point(320, 576);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(104, 24);
             this.button1.TabIndex = 4;
@@ -311,6 +311,7 @@ namespace Launcher
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Launcher DL (Build Version 4.5)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.uVAD_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.uVAD_FormClosed);
             this.Load += new System.EventHandler(this.uVAD_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
