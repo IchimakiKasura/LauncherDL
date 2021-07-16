@@ -218,7 +218,7 @@ namespace Launcher
 
         private void Hidden(object sender, EventArgs e)
         {
-            MessageBox.Show("LauncherDL buildver4.5\n\nFixed some errors and bugs nothing much\n\n\n Created by Kasura.", "huzuaah!", MessageBoxButtons.OK);
+            MessageBox.Show("LauncherDL buildver4.6\n\nFixed the naming bug cuz it only\nchanges whe Filetype is on Custom ffs\n\n\n Created by Kasura.", "huzuaah!", MessageBoxButtons.OK);
         }
         private void download_Click(object sender, EventArgs e)
         {
@@ -520,13 +520,18 @@ namespace Launcher
 
                     if (str.Contains("Deleting original file"))
                         str = string.Empty;
+
+                    if(str.Contains("finished downloading"))
+                        str = string.Empty;
+
                     var st = e.Data ?? "none";
 
                     if (Regex.IsMatch(st, @"^\[download\] (?<percent>.*)\.(.*)%"))
                         progressBar1.Value = int.Parse(Regex.Match(e.Data, @"^\[download\] (?<percent>.*)\.(.*)%").Groups["percent"].Value);
 
                     if (str != string.Empty)
-                        // see if it matches a "[download]" on the given string
+                    {
+                        // see if it matches a "[PROGRESS]" on the given string
                         if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"\[PROGRESS\]"))
                         {
                             //gets the textbox whole line array with text
@@ -537,11 +542,15 @@ namespace Launcher
                             outputCom.Lines = line;
                             //scrolls to the bottom automatically
                             outputCom.ScrollToCaret();
-                        } else 
-                            outputCom.AppendText($"\r\n{str}");
+                        }
+                        else outputCom.AppendText($"\r\n{str}");
+                        //https://www.youtube.com/watch?v=qgnMRNoT-PM
+                    }
                 }
             }
+
             else
+                // File Format Button
             {
                 var str = e.Data ?? string.Empty;
                 if (str.Contains("format code"))
@@ -606,17 +615,27 @@ namespace Launcher
             {
                 try
                 {
-                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{splitted}.{ext[i]}");
-                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}");
-                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}");
+                    File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{splitted}.{ext[i]}.part");
+
                 }
                 catch
                 {
-                    // catching the errors
+                    try
+                    {
+                        File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}.part");
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            File.Delete(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}.part");
+                        } catch { /*none*/}
+                    }
                 }
             }
         }
 
+        // BackgroundWorker download process
         private void dlWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             string sc = scc;
@@ -667,32 +686,53 @@ namespace Launcher
                 outputCom.AppendText(ErrorHandler("Invalid link 2"));
             }
 
-            if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"\[PROGRESS\] 100% of (.*) in (.*)$"))
+            // fix for future bugs so i dont have to
+            if (Regex.IsMatch(outputCom.Lines[outputCom.Lines.Length - 1], @"\[PROGRESS\]"))
             {
-                string[] line = outputCom.Lines;
-                var regex = @"\[PROGRESS\].100%.of.(?<size>.*).in.(?<eta>.*)$";
-                var DataSize = Regex.Match(line[outputCom.Lines.Length - 1], regex, RegexOptions.IgnoreCase).Groups["size"].Value;
-                var DataETA = Regex.Match(line[outputCom.Lines.Length - 1], regex, RegexOptions.IgnoreCase).Groups["eta"].Value.Trim();
-                line[outputCom.Lines.Length - 1] = $"\r\n[COMPLETE] Downloaded file in {DataETA} with a size of {DataSize}\r\n";
-                outputCom.Lines = line;
-                outputCom.ScrollToCaret();
-
-                if(FileName.Text.Length != 0)
+                if (FileName.Text.Length != 0)
                 {
                     var splitted = FileName.Text.Replace(" ", "_$_&@&");
-                    for(int i = 0; i < ext.Count; i++)
+                    for (int i = 0; i < ext.Count; i++)
                     {
+                        // lol nested try and catch
                         try
                         {
+                            //if it spots an error go to another one
                             File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\formatted\\{ext[i]}\\{FileName.Text}.{ext[i]}");
-                            File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Video\\{FileName.Text}.{ext[i]}");
-                            File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{FileName.Text}.{ext[i]}");
                         }
-                        catch {
-                            // catching the errors
+                        catch
+                        {
+                            try
+                            {
+                                // same as the top one but checks if the file is in the video
+                                File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Video\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Video\\{FileName.Text}.{ext[i]}");
+                            }
+                            catch
+                            {
+                                try
+                                {
+                                    // same but audio
+                                    File.Move(@$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{splitted}.{ext[i]}", @$"{Directory.GetCurrentDirectory()}\\output\\Audio\\{FileName.Text}.{ext[i]}");
+                                }
+                                catch { /*none*/ }
+                            }
                         }
                     }
                 }
+
+                string[] line = outputCom.Lines;
+                var regex = @"\[PROGRESS\].*%.of.(?<size>.*).in.(?<eta>.*)$";
+                var DataSize = Regex.Match(line[outputCom.Lines.Length - 1], regex, RegexOptions.IgnoreCase).Groups["size"].Value;
+                var DataETA = Regex.Match(line[outputCom.Lines.Length - 1], regex, RegexOptions.IgnoreCase).Groups["eta"].Value;
+                if (DataSize == string.Empty && DataETA == string.Empty)
+                {
+                    DataSize = "(ಥ_ಥ)";
+                    DataETA = "(ง•_•)ง";
+                }
+                line[outputCom.Lines.Length - 1] = $"\r\n[COMPLETE] Downloaded file in {DataETA} with a size of {DataSize}\r\n";
+                outputCom.Lines = line;
+                outputCom.ScrollToCaret();
+                DataETA = string.Empty;
             }
 
             Txtf = false;
@@ -745,6 +785,7 @@ namespace Launcher
             FileName.Enabled = true;
         }
 
+        // scroll to bottom when new text applied on textbox
         private void outputCom_TextChanged(object sender, EventArgs e)
         {
             outputCom.SelectionStart = outputCom.Text.Length;

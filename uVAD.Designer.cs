@@ -309,7 +309,7 @@ namespace Launcher
             this.MaximizeBox = false;
             this.Name = "uVAD";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Launcher DL (Build Version 4.5)";
+            this.Text = "Launcher DL (Build Version 4.6)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.uVAD_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.uVAD_FormClosed);
             this.Load += new System.EventHandler(this.uVAD_Load);
